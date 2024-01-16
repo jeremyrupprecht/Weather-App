@@ -26,6 +26,7 @@ async function getWeatherForLocation(location) {
   try {
     const weatherDataResponse = await fetch(
       `http://api.weatherapi.com/v1/current.json?key=ba28fb17cfeb4cddac8203519241301&q=${location}`,
+      { mode: "cors" },
     );
     const weatherDataJSON = await weatherDataResponse.json();
     console.log(weatherDataJSON);
