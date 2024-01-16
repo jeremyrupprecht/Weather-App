@@ -77,7 +77,7 @@ async function processDataForUpperRight(forecastDataPromise) {
 
 // const currentData = fetchWeatherData({ type: "current", days: "" }, "Calgary");
 const forecastData = fetchWeatherData(
-  { type: "forecast", days: "&days=3" },
+  { type: "forecast", days: "&days=2" },
   "Calgary",
 );
 // const historicalData = fetchWeatherData({type: "history"});
