@@ -1,3 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  color: white;
+  font-family: lato, sans-serif;
+}
+
+html, body {
+  height: 100vh;
+  width: 100vw;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
 .hello {
   color: red;
   background: url("./images/testImage.png");
@@ -5,4 +19,18 @@
 
 html {
   background-color: gray;
+}
+
+#backgroundContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  height: 100vh;
+  width: 100vw;
+
+  background: url("./images/weatherBackground.jpg");
+  background-size: cover;
+  background-repeat:no-repeat;
+  background-position: center center;
 }
