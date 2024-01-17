@@ -33,11 +33,9 @@ async function getLocationCoordinates(location) {
         coordinatesObject.results[0];
       return { name, latitude, longitude, timezone };
     }
-    return "Location not found. Search must be in the form of 'City', 'City, State' or 'City, Country'";
-    // NEED TO DEAL WITH ERRORS IN GETTING THE LOCATION
+    throw new Error("Error fetching location coordiantes");
   } catch (error) {
-    console.log("Error fetching location coordiantes", error);
-    return error;
+    throw new Error("Error fetching location coordiantes");
   }
 }
 
@@ -61,6 +59,7 @@ async function buildFetchURL(
     celciusOrFahrenheit === "Celcius"
   ) {
     url = `https://api.open-meteo.com/v1/forecast?latitude=${coordinateData.latitude}&longitude=${coordinateData.longitude}&daily=weather_code,temperature_2m_max,temperature_2m_min&forecast_days=7&timezone=${coordinateData.timezone}`;
+
     // Forecast data in Fahrenheit
   } else if (
     currentOrForecast === "Forecast" &&
@@ -75,18 +74,14 @@ async function fetchCurrentWeatherData(urlPromise) {
   const url = await urlPromise;
   try {
     const weatherDataResponse = await fetch(url, { mode: "cors" });
-    const weatherDataJSON = await weatherDataResponse.json();
-    return weatherDataJSON;
+    if (!weatherDataResponse.error) {
+      const weatherDataJSON = await weatherDataResponse.json();
+      return weatherDataJSON;
+    }
+    throw new Error("Error while fetching weather data");
   } catch (error) {
-    console.log("Error while fetching forecast weather data", error);
-    return error;
+    throw new Error("Error while fetching weather data");
   }
-}
-
-// &daily=weather_code,temperature_2m_max,temperature_2m_min&forecast_days=7
-
-async function fetchForecastWeatherData(urlPromise) {
-  return urlPromise;
 }
 
 function interpretWeatherCode(code) {
@@ -94,31 +89,34 @@ function interpretWeatherCode(code) {
 }
 
 // PUT THIS IN WINDOW ON LOAD FUNCTION
-try {
-  const coordinates = getLocationCoordinates("vancouver");
-  const url1 = buildFetchURL(coordinates, "Current", "Celcius");
-  const url2 = buildFetchURL(coordinates, "Current", "Fahrenheit");
-  const url3 = buildFetchURL(coordinates, "Forecast", "Celcius");
-  const url4 = buildFetchURL(coordinates, "Forecast", "Fahrenheit");
 
-  fetchCurrentWeatherData(url1).then((weatherData) => {
-    console.log(weatherData);
+getLocationCoordinates("phoenix")
+  .then((coordinates) => {
+    const url1 = buildFetchURL(coordinates, "Current", "Celcius");
+    const url2 = buildFetchURL(coordinates, "Current", "Fahrenheit");
+    const url3 = buildFetchURL(coordinates, "Forecast", "Celcius");
+    const url4 = buildFetchURL(coordinates, "Forecast", "Fahrenheit");
+
+    const promises = [
+      fetchCurrentWeatherData(url1),
+      fetchCurrentWeatherData(url2),
+      fetchCurrentWeatherData(url3),
+      fetchCurrentWeatherData(url4),
+    ];
+
+    Promise.all(promises)
+      .then((allWeatherData) => {
+        console.log(allWeatherData);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  })
+  .catch((error) => {
+    console.log(error);
   });
-  fetchCurrentWeatherData(url2).then((weatherData) => {
-    console.log(weatherData);
-  });
-  fetchCurrentWeatherData(url3).then((weatherData) => {
-    console.log(weatherData);
-  });
-  fetchCurrentWeatherData(url4).then((weatherData) => {
-    console.log(weatherData);
-  });
-} catch (error) {
-  console.log(error);
-}
 
 interpretWeatherCode(3);
-fetchForecastWeatherData(1, 1);
 
 // ----------------------------------------------------------------------------
 
