@@ -22,6 +22,30 @@ function component() {
 }
 document.body.appendChild(component());
 
+async function getLocationCoordinates(location) {
+  try {
+    const coordinatesPromse = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${location}&count=1&language=en&format=json`,
+    );
+    const coordinatesObject = await coordinatesPromse.json();
+    if (coordinatesObject.results) {
+      const { name, latitude, longitude } = coordinatesObject.results[0];
+      return { name, latitude, longitude };
+    }
+    return "Location not found. Search must be in the form of 'City', 'City, State' or 'City, Country'";
+    // NEED TO DEAL WITH ERRORS IN GETTING THE LOCATION
+  } catch (error) {
+    console.log("Error fetching location coordiantes", error);
+    return error;
+  }
+}
+
+getLocationCoordinates("new york city").then((response) => {
+  console.log(response);
+});
+
+// ----------------------------------------------------------------------------
+
 async function fetchWeatherData(requestParameters, location) {
   try {
     const weatherDataResponse = await fetch(
@@ -77,7 +101,7 @@ async function processDataForUpperRight(forecastDataPromise) {
 
 // const currentData = fetchWeatherData({ type: "current", days: "" }, "Calgary");
 const forecastData = fetchWeatherData(
-  { type: "forecast", days: "&days=2" },
+  { type: "forecast", days: "&days=3" },
   "Calgary",
 );
 // const historicalData = fetchWeatherData({type: "history"});
