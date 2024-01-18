@@ -169,40 +169,81 @@ input[type="text"]:focus {
 #dailyHourlyContainer {
   display: flex;
   gap: 10px;
+  align-items: center;
+  position: relative;
 }
 
 #dailyHourlyContainer button {
-  /* border: 1px solid white; */
-  padding: 5px;
+  padding: 6px;
   border-radius: 5px;
 }
 
-#dailyButton {
-  border: 1px solid white;
+#dailyButton.border, #hourlyButton.border {
+  /* border: 2px solid white; */
+  -webkit-box-shadow:inset 0px 0px 0px 2px white;
+  -moz-box-shadow:inset 0px 0px 0px 2px white;
+  box-shadow:inset 0px 0px 0px 2px white;
 }
 
-#dailyForecastGrid {
+.dailyForecastGrid.show, .hourlyForecastGrid.show {
   display: grid;
+}
+
+#hoursSelectionContainer {
+  visibility: hidden;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding-top: 4px;
+}
+
+#hoursSelectionContainer.show {
+  visibility: visible;
+}
+
+.arrow {
+  width: 37px;
+}
+
+.dot {
+  position: relative;
+  top: -1px;
+  height: 7px;
+  width: 7px;
+  /* background-color: rgba(0,0,0,0); */
+  border: 1px solid #f5f5f5;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.dailyForecastGrid {
+  display: none;
   grid-template: 1fr / repeat(7, 1fr);
   flex: 1;
-  /* border: 1px solid red; */
-  
+  margin-top: 30px;
 }
 
 .dayCard {
+  height: 100%;
+  display: grid;
+  grid-template: 3.5rem 1.5rem 0.9rem 60px / 1fr;
+  gap: 5px;
+  justify-items: center;
+  align-items: center;
   /* border: 1px solid red; */
-  display: flex;
+
+  /* display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 10px; */
 }
 
-#dayName {
+#dayName, #hourName {
   font-size: 1.4rem;
 }
 
-#dayMaxTemp {
+#dayMaxTemp, #hourTemp {
   font-size: 1.6rem;
   font-weight: bold;
 }
@@ -211,10 +252,31 @@ input[type="text"]:focus {
   font-size: 0.9rem;
 }
 
-#dayIcon {
+#dayIcon, #hourIcon {
   width: 70px;
 }
 
 .testBorder {
   border: 1px solid white;
+}
+
+.hourlyForecastGrid {
+  display: none;
+  grid-template: 1fr / repeat(8, 1fr);
+  flex: 1;
+  margin-top: 30px;
+  /* border: 1px solid red; */
+}
+
+.hourCard {
+  height: 100%;
+  display: grid;
+  grid-template: 3.5rem 1.5rem 0.9rem 60px / 1fr;
+  gap: 5px;
+  justify-items: center;
+  align-items: center;
+}
+
+#hourIcon {
+  grid-row: 4 / 5;
 }
