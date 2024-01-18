@@ -9,14 +9,90 @@
   <body>
     <div id="backgroundContainer"></div>
     <div id="mainContainer">
+      
       <div id="upperLeft">
+        <div>
+          <div id="mainForecast">Overcast Clouds</div>
+          <div id="location">Auckland</div>
+        </div>
+        <div>
+          <div id="date">
+            Thursday, 19th Jan' 24
+          </div>
+          <div id="time">
+            7:24AM
+          </div>
+        </div>
 
+        <div>
+          <div id="mainTemperature">22 °C</div>
+          <div id="switchTemperatureContainer">
+            <button id="switchTemperatureButton">Display °F</button>
+          </div>
+        </div>
+
+        <div id="mainIcon"></div>
+        <div id="searchContainer">
+          <input type="text" id="searchBar" placeholder="SearchLocation...">
+          <div id="searchIconContainer"></div>
+        </div>
       </div>
+
       <div id="upperRight">
-
-      </div>
+        <div id="alignRight">
+          <div class="upperRightContainer">
+            <div id="feelsLikeIcon" class="iconContainer"></div>
+            <div>
+              <p class="upperLeftText">Feels Like</p>
+              <div id="feelsLike" class="upperLeftText">25 °C</div>
+            </div>
+          </div>
+  
+          <div class="upperRightContainer">
+            <div id="humidityIcon" class="iconContainer"></div>
+            <div>
+              <p class="upperLeftText">Humidity</p>
+              <div id="humidity" class="upperLeftText">59 %</div>
+            </div>
+          </div>
+  
+          <div class="upperRightContainer">
+            <div id="precipitationIcon" class="iconContainer"></div>
+            <div>
+              <p class="upperLeftText">Precipitation</p>
+              <div id="precipitation" class="upperLeftText">0 cm</div>
+            </div>
+          </div>
+  
+          <div class="upperRightContainer">
+            <div id="windSpeedIcon" class="iconContainer"></div>
+            <div>
+              <p class="upperLeftText">Wind Speed</p>
+              <div id="windSpeed" class="upperLeftText">16.7 km/hr</div>
+            </div>
+          </div>
+        </div>
+        </div>
       <div id="footer">
+        <div id="dailyHourlyContainer">
+          <button id="dailyButton">Daily</button>
+          <button id="hourlyButton">Hourly</button>
+        </div>
+        <div id="forecastGrid">
+          <div id="dailyForecast">
 
+            <div class="dayCard">
+              <div id="dayName">Friday</div>
+              <div id="dayMaxTemp">25 °C</div>
+              <div id="dayMinTemp">20 °C</div>
+              <div id="dayIcon"></div>
+            </div>
+          </div>
+
+          <div class="hourlyForecast">
+
+          </div>
+        </div>
       </div>
 
     </div>

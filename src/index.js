@@ -6,7 +6,65 @@ import precipitationIcon from "./images/precipitationIcon.svg";
 import windSpeedIcon from "./images/windIcon.svg";
 // import backgroud from "./images/weatherBackground.jpg";
 // import testImage from "./images/testImage.png";
-import getWeatherData from "./apiHandler";
+// import getWeatherData from "./apiHandler";
+
+// Weather Icons
+import clearSky from "./images/weatherCodeIcons/clearSky.svg";
+import drizzle from "./images/weatherCodeIcons/drizzle.svg";
+import foggy from "./images/weatherCodeIcons/foggy.svg";
+import freezingDrizzle from "./images/weatherCodeIcons/freezingDrizzle.svg";
+import freezingRain from "./images/weatherCodeIcons/freezingRain.svg";
+import partlyCloudy from "./images/weatherCodeIcons/partlyCloudy.svg";
+import rain from "./images/weatherCodeIcons/rain.svg";
+import rainShowers from "./images/weatherCodeIcons/rainShowers.svg";
+import snowfall from "./images/weatherCodeIcons/snowfall.svg";
+import snowGrains from "./images/weatherCodeIcons/snowGrains.svg";
+import snowShowers from "./images/weatherCodeIcons/snowShowers.svg";
+import thunderStormBoth from "./images/weatherCodeIcons/thunderStormBoth.svg";
+
+// Cropped Weather Icons
+import clearSkyC from "./images/weatherCodeIconsCropped/clearSkyCropped.svg";
+import drizzleC from "./images/weatherCodeIconsCropped/drizzleCropped.svg";
+import foggyC from "./images/weatherCodeIconsCropped/foggyCropped.svg";
+import freezingDrizzleC from "./images/weatherCodeIconsCropped/freezingDrizzleCropped.svg";
+import freezingRainC from "./images/weatherCodeIconsCropped/freezingRainCropped.svg";
+import partlyCloudyC from "./images/weatherCodeIconsCropped/partlyCloudyCropped.svg";
+import rainC from "./images/weatherCodeIconsCropped/rainCropped.svg";
+import rainShowersC from "./images/weatherCodeIconsCropped/rainShowersCropped.svg";
+import snowfallC from "./images/weatherCodeIconsCropped/snowfallCropped.svg";
+import snowGrainsC from "./images/weatherCodeIconsCropped/snowGrainsCropped.svg";
+import snowShowersC from "./images/weatherCodeIconsCropped/snowShowersCropped.svg";
+import thunderStormBothC from "./images/weatherCodeIconsCropped/thunderStormBothCropped.svg";
+
+const weatherIcons = [
+  clearSky,
+  drizzle,
+  foggy,
+  freezingDrizzle,
+  freezingRain,
+  partlyCloudy,
+  rain,
+  rainShowers,
+  snowfall,
+  snowGrains,
+  snowShowers,
+  thunderStormBoth,
+];
+
+const weatherIconsCropped = [
+  clearSkyC,
+  drizzleC,
+  foggyC,
+  freezingDrizzleC,
+  freezingRainC,
+  partlyCloudyC,
+  rainC,
+  rainShowersC,
+  snowfallC,
+  snowGrainsC,
+  snowShowersC,
+  thunderStormBothC,
+];
 
 // function component() {
 //   // Test CSS
@@ -29,9 +87,12 @@ import getWeatherData from "./apiHandler";
 // }
 // document.body.appendChild(component());
 
+// Move these to dom?
+
 function renderImage(parent, image) {
   const imageElement = new Image();
   imageElement.src = image;
+  // imageElement.classList.add("testBorder");
   parent.appendChild(imageElement);
 }
 
@@ -53,5 +114,74 @@ function renderIcons() {
   const windSpeedContainer = document.getElementById("windSpeedIcon");
   renderImage(windSpeedContainer, windSpeedIcon);
 }
+
+function interpretWeatherCode(code, cropped) {
+  let imagesToUse = weatherIcons;
+  if (cropped) {
+    imagesToUse = weatherIconsCropped;
+  }
+
+  switch (code) {
+    case 0:
+      return imagesToUse[0];
+    case 1:
+    case 2:
+    case 3:
+      return imagesToUse[1];
+    case 45:
+    case 48:
+      return imagesToUse[2];
+    case 51:
+    case 53:
+    case 55:
+      return imagesToUse[3];
+    case 56:
+    case 57:
+      return imagesToUse[4];
+    case 61:
+    case 63:
+    case 65:
+      return imagesToUse[5];
+    case 66:
+    case 67:
+      return imagesToUse[6];
+    case 71:
+    case 73:
+    case 75:
+      return imagesToUse[7];
+    case 77:
+      return imagesToUse[8];
+    case 80:
+    case 81:
+    case 82:
+      return imagesToUse[9];
+    case 85:
+    case 86:
+      return imagesToUse[10];
+    case 95:
+    case 96:
+    case 99:
+      return imagesToUse[11];
+    default:
+      return imagesToUse[0];
+  }
+}
+
+function renderForecastIcons(iconCodes) {
+  const dayCardsCollection = document.getElementsByClassName("dayCard");
+  for (let i = 0; i < dayCardsCollection.length; i += 1) {
+    const dayIconContainer =
+      dayCardsCollection[i].children[dayCardsCollection[i].children.length - 1];
+    renderImage(dayIconContainer, interpretWeatherCode(iconCodes[i], false));
+  }
+}
+
+function renderCurrentIcon(iconCode) {
+  const mainIconContainer = document.getElementById("mainIcon");
+  renderImage(mainIconContainer, interpretWeatherCode(iconCode, true));
+}
+
 renderIcons();
-getWeatherData("new york city");
+renderCurrentIcon(51);
+renderForecastIcons([71, 77, 80, 85, 95, 61, 66]);
+// getWeatherData("new york city");
