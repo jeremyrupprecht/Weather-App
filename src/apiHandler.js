@@ -162,13 +162,20 @@ function formatDate(string) {
   return formattedUtcDate;
 }
 
-function formatTime(timeZone) {
+function formatTime(timeZone, shortened, time) {
+  let utcDate = new Date();
+  if (time) {
+    utcDate = new Date(time);
+  }
+
+  if (shortened) {
+    utcDate.setMinutes(Math.round(utcDate.getMinutes() / 60) * 60);
+  }
   const options = {
     hour: "numeric",
     minute: "numeric",
     timeZone,
   };
-  const utcDate = new Date();
   const formattedTime = new Intl.DateTimeFormat("en-US", options).format(
     utcDate,
   );
@@ -177,24 +184,59 @@ function formatTime(timeZone) {
 
 async function extractUpperLeftData(weatherDataPromise) {
   const data = await weatherDataPromise;
-  console.log(data);
   const mainForecast = interpretWeatherCode(data[0].current.weather_code);
   const upperLeftData = {
     mainForecast,
     location: data[1],
     date: formatDate(data[0].current.time),
-    time: formatTime(data[0].current.timezone),
+    time: formatTime(data[0].current.timezone, false),
     temperature: `${data[0].current.temperature_2m} ${data[0].current_units.temperature_2m}`,
   };
   return upperLeftData;
 }
 
-async function extractUpperRightData() {
-  // console.log("upper right data!");
+async function extractUpperRightData(weatherDataPromise) {
+  const data = await weatherDataPromise;
+  const upperRightData = {
+    feelsLike: `${data[0].current.apparent_temperature} ${data[0].current_units.apparent_temperature}`,
+    humidity: `${data[0].current.relative_humidity_2m} ${data[0].current_units.relative_humidity_2m}`,
+    precipitation: `${data[0].current.precipitation} ${data[0].current_units.precipitation}`,
+    windSpeed: `${data[0].current.wind_speed_10m} ${data[0].current_units.wind_speed_10m}`,
+  };
+  return upperRightData;
 }
 
-async function extractFooterdata() {
-  // console.log("footer data!");
+async function extractFooterdata(dailyDataPromise, hourlyDataPromise) {
+  const dailyData = await dailyDataPromise;
+  const hourlyData = await hourlyDataPromise;
+  // Fill in and return this object
+  const footerData = {
+    daily: [],
+    hourly: [],
+  };
+  // Fill in daily data
+  for (let i = 0; i < dailyData.daily.temperature_2m_max.length; i += 1) {
+    const compiledData = {
+      maxTemp: dailyData.daily.temperature_2m_max[i],
+      minTemp: dailyData.daily.temperature_2m_min[i],
+      weatherCode: dailyData.daily.weather_code[i],
+    };
+    footerData.daily.push(compiledData);
+  }
+  // Fill in hourly data
+  for (let i = 0; i < hourlyData[0].hourly.temperature_2m.length; i += 1) {
+    const compiledData = {
+      time: formatTime(
+        hourlyData[0].timezone,
+        true,
+        hourlyData[0].hourly.time[i],
+      ),
+      temperature: `${hourlyData[0].hourly.temperature_2m[i]} ${hourlyData[0].hourly_units.temperature_2m}`,
+      weatherCode: hourlyData[0].hourly.weather_code[i],
+    };
+    footerData.hourly.push(compiledData);
+  }
+  return footerData;
 }
 
 export {

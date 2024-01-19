@@ -244,16 +244,42 @@ async function renderUpperLeftCorner(dataPromise) {
   dateElement.textContent = data.date;
   timeElement.textContent = data.time;
   temperatureElement.textContent = data.temperature;
-
-  //   console.log(data);
 }
 
-function renderUpperRightCorner() {
-  //   console.log("rendering upper right!", data);
+async function renderUpperRightCorner(dataPromise) {
+  const data = await dataPromise;
+  const feelsLikeElement = document.getElementById("feelsLike");
+  const humidityElement = document.getElementById("humidity");
+  const precipitationElement = document.getElementById("precipitation");
+  const windSpeedElement = document.getElementById("windSpeed");
+
+  feelsLikeElement.textContent = data.feelsLike;
+  humidityElement.textContent = data.humidity;
+  precipitationElement.textContent = data.precipitation;
+  windSpeedElement.textContent = data.windSpeed;
 }
 
-function renderFooter() {
-  //   console.log("rendering footer!", data);
+async function renderFooter(forecastPromise, currentPromise) {
+  const forecastData = await forecastPromise;
+  const currentData = await currentPromise;
+
+  const dayCardElements = document.getElementsByClassName("dayCard");
+  console.log(forecastData);
+  console.log(dayCardElements);
+
+  // Render forecast/daily data
+  for (let i = 1; i < forecastData.length; i += 1) {
+    console.log(dayCardElements[i - 1].children);
+
+    // NEED TO GET THE DAY NAME --> EXTRACT DAY NAME FROM THE EXTRACTFOOTERDATAFUNCTION
+    // IN APIHANDLER DO ITTTTTTTTTTTTTTT
+
+    // dayCardElements[i - 1].children[0] =
+
+    // console.log(dayCardElements[i - 1]);
+  }
+
+  // Render current/hourly data
 }
 
 function renderWeatherData() {

@@ -28,16 +28,21 @@ async function renderPage(location, celcius) {
   if (celcius) {
     upperLeftData = await extractUpperLeftData(data.currentCelcius);
     upperRightData = await extractUpperRightData(data.currentCelcius);
-    footerData = await extractFooterdata(data.forecastCelcius);
+    footerData = await extractFooterdata(
+      data.forecastCelcius,
+      data.currentCelcius,
+    );
   } else {
     upperLeftData = await extractUpperLeftData(data.currentFahrenheit);
     upperRightData = await extractUpperRightData(data.currentFahrenheit);
-    footerData = await extractFooterdata(data.forecastFahrenheit);
+    footerData = await extractFooterdata(
+      data.forecastFahrenheit,
+      data.currentFahrenheit,
+    );
   }
-
   renderUpperLeftCorner(upperLeftData);
   renderUpperRightCorner(upperRightData);
-  renderFooter(footerData);
+  renderFooter(footerData.daily, footerData.hourly);
 }
 
 // Set up page --> NO weather calls
