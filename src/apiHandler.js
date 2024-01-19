@@ -74,9 +74,13 @@ async function getWeatherData(location) {
       fetchCurrentWeatherData(url3),
       fetchCurrentWeatherData(url4),
     ]);
-
-    console.log(allWeatherData);
-    return allWeatherData;
+    const mappedWeatherData = {
+      currentCelcius: allWeatherData[0],
+      currentFahrenheit: allWeatherData[1],
+      forecastCelcius: allWeatherData[2],
+      forecastFahrenheit: allWeatherData[3],
+    };
+    return mappedWeatherData;
   } catch (error) {
     console.log("Error while getting weather data", error);
     return error;
@@ -84,4 +88,22 @@ async function getWeatherData(location) {
   }
 }
 
-export default getWeatherData;
+async function extractUpperLeftData(weatherDataPromise) {
+  const data = await weatherDataPromise;
+  console.log(data);
+}
+
+async function extractUpperRightData(weatherDataPromise) {
+  // console.log("upper right data!");
+}
+
+async function extractFooterdata(weatherDataPromise) {
+  // console.log("footer data!");
+}
+
+export {
+  getWeatherData,
+  extractUpperLeftData,
+  extractUpperRightData,
+  extractFooterdata,
+};
