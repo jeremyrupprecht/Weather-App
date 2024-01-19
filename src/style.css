@@ -216,6 +216,10 @@ input[type="text"]:focus {
   cursor: pointer;
 }
 
+.dot.active {
+  background-color: white;
+}
+
 .dailyForecastGrid {
   display: none;
   grid-template: 1fr / repeat(7, 1fr);
@@ -226,7 +230,7 @@ input[type="text"]:focus {
 .dayCard {
   height: 100%;
   display: grid;
-  grid-template: 3.5rem 1.5rem 0.9rem 60px / 1fr;
+  grid-template: 4.5rem 1.5rem 0.9rem 85px / 1fr;
   gap: 5px;
   justify-items: center;
   align-items: center;
@@ -239,8 +243,18 @@ input[type="text"]:focus {
   gap: 10px; */
 }
 
-#dayName, #hourName {
+#dayName, #dayMaxTemp {
+  white-space: nowrap;
+}
+
+#hourName {
   font-size: 1.4rem;
+  text-align: center;
+}
+
+#dayName {
+  font-size: calc(0.5rem + 1vw);
+  text-align: center;
 }
 
 #dayMaxTemp, #hourTemp {
@@ -280,3 +294,10 @@ input[type="text"]:focus {
 #hourIcon {
   grid-row: 4 / 5;
 }
+
+@media only screen and (max-width: 850px) {
+  body {
+    background-color: lightblue;
+  }
+}
+

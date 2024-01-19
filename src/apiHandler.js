@@ -182,6 +182,36 @@ function formatTime(timeZone, shortened, time) {
   return formattedTime;
 }
 
+// Function to get the suffix for the day (e.g., "st", "nd", "rd", "th")
+function getNumberSuffix(day) {
+  if (day >= 11 && day <= 13) {
+    return "th";
+  }
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+}
+
+function formatDay(inputString, timezone) {
+  const inputDate = new Date(`${inputString}T00:00:00`);
+  const options = {
+    weekday: "long",
+    timeZone: timezone,
+  };
+  const formattedDate = inputDate.toLocaleString("en-US", options);
+  const dayOfMonth = inputDate.getDate();
+  const suffix = getNumberSuffix(dayOfMonth);
+  const formattedDateWithTh = `${formattedDate} ${dayOfMonth}${suffix}`;
+  return formattedDateWithTh;
+}
+
 async function extractUpperLeftData(weatherDataPromise) {
   const data = await weatherDataPromise;
   const mainForecast = interpretWeatherCode(data[0].current.weather_code);
@@ -217,12 +247,14 @@ async function extractFooterdata(dailyDataPromise, hourlyDataPromise) {
   // Fill in daily data
   for (let i = 0; i < dailyData.daily.temperature_2m_max.length; i += 1) {
     const compiledData = {
-      maxTemp: dailyData.daily.temperature_2m_max[i],
-      minTemp: dailyData.daily.temperature_2m_min[i],
+      date: formatDay(dailyData.daily.time[i], dailyData.daily_units.timezone),
+      maxTemp: `${dailyData.daily.temperature_2m_max[i]} ${dailyData.daily_units.temperature_2m_max}`,
+      minTemp: `${dailyData.daily.temperature_2m_min[i]} ${dailyData.daily_units.temperature_2m_min}`,
       weatherCode: dailyData.daily.weather_code[i],
     };
     footerData.daily.push(compiledData);
   }
+
   // Fill in hourly data
   for (let i = 0; i < hourlyData[0].hourly.temperature_2m.length; i += 1) {
     const compiledData = {

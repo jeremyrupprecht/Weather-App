@@ -182,6 +182,8 @@ function renderForecastIcons(iconCodes, hourly) {
   for (let i = 0; i < cardsCollection.length; i += 1) {
     const dayIconContainer =
       cardsCollection[i].children[cardsCollection[i].children.length - 1];
+    // Clear previous icon
+    dayIconContainer.innerHTML = "";
     renderImage(dayIconContainer, interpretWeatherCode(iconCodes[i], false));
   }
 }
@@ -214,19 +216,6 @@ function toggleForecastCards(toggleHourlyCards) {
     hoursSelectionButtons.classList.remove("show");
   }
 }
-
-function setupListeners() {
-  const dailyForecastButton = document.getElementById("dailyButton");
-  dailyForecastButton.addEventListener("click", () => {
-    toggleForecastCards(false);
-  });
-
-  const hourlyForecastButton = document.getElementById("hourlyButton");
-  hourlyForecastButton.addEventListener("click", () => {
-    toggleForecastCards(true);
-  });
-}
-
 // function reRenderInCelciusOrFahrenheit() {
 
 // }
@@ -262,24 +251,52 @@ async function renderUpperRightCorner(dataPromise) {
 async function renderFooter(forecastPromise, currentPromise) {
   const forecastData = await forecastPromise;
   const currentData = await currentPromise;
-
   const dayCardElements = document.getElementsByClassName("dayCard");
-  console.log(forecastData);
-  console.log(dayCardElements);
 
+  forecastData.shift();
   // Render forecast/daily data
-  for (let i = 1; i < forecastData.length; i += 1) {
-    console.log(dayCardElements[i - 1].children);
-
-    // NEED TO GET THE DAY NAME --> EXTRACT DAY NAME FROM THE EXTRACTFOOTERDATAFUNCTION
-    // IN APIHANDLER DO ITTTTTTTTTTTTTTT
-
-    // dayCardElements[i - 1].children[0] =
-
-    // console.log(dayCardElements[i - 1]);
+  for (let i = 0; i < forecastData.length; i += 1) {
+    dayCardElements[i].children[0].textContent = forecastData[i].date;
+    dayCardElements[i].children[1].textContent = forecastData[i].maxTemp;
+    dayCardElements[i].children[2].textContent = forecastData[i].minTemp;
+    // NEED TO DO ICONS
   }
+  const iconCodes = [];
+  for (let i = 0; i < forecastData.length; i += 1) {
+    iconCodes.push(forecastData[i].weatherCode);
+  }
+  renderForecastIcons(iconCodes, false);
 
   // Render current/hourly data
+}
+
+function switchHours() {
+  // Set active dot
+  const allDotElements = document.getElementsByClassName("dot");
+  for (let i = 0; i < allDotElements.length; i += 1) {
+    allDotElements[i].classList.remove("active");
+  }
+  this.classList.add("active");
+  console.log(this, allDotElements);
+}
+
+function setupListeners() {
+  const dailyForecastButton = document.getElementById("dailyButton");
+  dailyForecastButton.addEventListener("click", () => {
+    toggleForecastCards(false);
+  });
+
+  const hourlyForecastButton = document.getElementById("hourlyButton");
+  hourlyForecastButton.addEventListener("click", () => {
+    toggleForecastCards(true);
+  });
+
+  const switchHoursDots = document.getElementsByClassName("dot");
+  for (let i = 0; i < switchHoursDots.length; i += 1) {
+    switchHoursDots[i].addEventListener("click", switchHours);
+  }
+
+  // const switchHoursArrows = document.getElementsByClassName("")
 }
 
 function renderWeatherData() {
@@ -291,7 +308,7 @@ function renderWeatherData() {
   // Upper right corner
 
   // Footer
-  renderForecastIcons([71, 77, 80, 85, 95, 61, 66], false);
+  renderForecastIcons([0, 0, 0, 0, 0, 0, 0], false);
   renderForecastIcons([71, 77, 80, 85, 95, 61, 66, 0], true);
 }
 
