@@ -75,8 +75,8 @@ async function getWeatherData(location) {
       fetchCurrentWeatherData(url4),
     ]);
     const mappedWeatherData = {
-      currentCelcius: allWeatherData[0],
-      currentFahrenheit: allWeatherData[1],
+      currentCelcius: [allWeatherData[0], coordinates.name],
+      currentFahrenheit: [allWeatherData[1], coordinates.name],
       forecastCelcius: allWeatherData[2],
       forecastFahrenheit: allWeatherData[3],
     };
@@ -88,16 +88,112 @@ async function getWeatherData(location) {
   }
 }
 
+function interpretWeatherCode(code) {
+  switch (code) {
+    case 0:
+      return "Clear Sky";
+    case 1:
+      return "Mainly Clear Sky";
+    case 2:
+      return "Partly Cloudy";
+    case 3:
+      return "Overcast Clouds";
+    case 45:
+      return "Non-Frozen Fog";
+    case 48:
+      return "Freezing Fog";
+    case 51:
+      return "Light Drizzle";
+    case 53:
+      return "Moderate Drizzle";
+    case 55:
+      return "Intense Drizzle";
+    case 56:
+      return "Light Freezing Drizzle";
+    case 57:
+      return "Dense Freezing Drizzle";
+    case 61:
+      return "Slight Rain";
+    case 63:
+      return "Moderate Rain";
+    case 65:
+      return "Intense Rain";
+    case 66:
+      return "Light Freezing Rain";
+    case 67:
+      return "Intense Freezing Rain";
+    case 71:
+      return "Light Snow Fall";
+    case 73:
+      return "Moderate Snow Fall";
+    case 75:
+      return "Intense Snow Fall";
+    case 77:
+      return "Granular Snow Fall";
+    case 80:
+      return "Light Rain Showers";
+    case 81:
+      return "Moderate Rain Showers";
+    case 82:
+      return "Violent Rain Showers";
+    case 85:
+      return "Light Snow Showers";
+    case 86:
+      return "Intense Snow Showers";
+    case 95:
+      return "Thunderstorm";
+    case 96:
+      return "Moderate Thunderstorm";
+    case 99:
+      return "Thunderstorm With Heavy Hail";
+    default:
+      return "Clear Sky";
+  }
+}
+
+function formatDate(string) {
+  const utcDate = new Date(`${string}Z`);
+  const formattedUtcDate = utcDate.toLocaleDateString("en-us", {
+    weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+  return formattedUtcDate;
+}
+
+function formatTime(timeZone) {
+  const options = {
+    hour: "numeric",
+    minute: "numeric",
+    timeZone,
+  };
+  const utcDate = new Date();
+  const formattedTime = new Intl.DateTimeFormat("en-US", options).format(
+    utcDate,
+  );
+  return formattedTime;
+}
+
 async function extractUpperLeftData(weatherDataPromise) {
   const data = await weatherDataPromise;
   console.log(data);
+  const mainForecast = interpretWeatherCode(data[0].current.weather_code);
+  const upperLeftData = {
+    mainForecast,
+    location: data[1],
+    date: formatDate(data[0].current.time),
+    time: formatTime(data[0].current.timezone),
+    temperature: `${data[0].current.temperature_2m} ${data[0].current_units.temperature_2m}`,
+  };
+  return upperLeftData;
 }
 
-async function extractUpperRightData(weatherDataPromise) {
+async function extractUpperRightData() {
   // console.log("upper right data!");
 }
 
-async function extractFooterdata(weatherDataPromise) {
+async function extractFooterdata() {
   // console.log("footer data!");
 }
 

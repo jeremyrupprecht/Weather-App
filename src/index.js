@@ -42,4 +42,4 @@ async function renderPage(location, celcius) {
 
 // Set up page --> NO weather calls
 setupPage();
-renderPage("Calgary");
+renderPage("Calgary", true);

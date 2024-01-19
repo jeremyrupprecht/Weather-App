@@ -231,15 +231,28 @@ function setupListeners() {
 
 // }
 
-function renderUpperLeftCorner(data) {
-  //   console.log("rendering upper left!", data);
+async function renderUpperLeftCorner(dataPromise) {
+  const data = await dataPromise;
+  const mainForecastElement = document.getElementById("mainForecast");
+  const locationElement = document.getElementById("location");
+  const dateElement = document.getElementById("date");
+  const timeElement = document.getElementById("time");
+  const temperatureElement = document.getElementById("mainTemperature");
+
+  mainForecastElement.textContent = data.mainForecast;
+  locationElement.textContent = data.location;
+  dateElement.textContent = data.date;
+  timeElement.textContent = data.time;
+  temperatureElement.textContent = data.temperature;
+
+  //   console.log(data);
 }
 
-function renderUpperRightCorner(data) {
+function renderUpperRightCorner() {
   //   console.log("rendering upper right!", data);
 }
 
-function renderFooter(data) {
+function renderFooter() {
   //   console.log("rendering footer!", data);
 }
 
