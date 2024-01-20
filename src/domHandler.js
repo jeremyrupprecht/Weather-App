@@ -216,10 +216,12 @@ function toggleForecastCards(toggleHourlyCards) {
     hoursSelectionButtons.classList.remove("show");
   }
 }
+
 // function reRenderInCelciusOrFahrenheit() {
 
 // }
 
+// MAYBE SPLIT THIS INTO 2 FUNCTIONS???
 async function renderUpperLeftCorner(dataPromise) {
   const data = await dataPromise;
   const mainForecastElement = document.getElementById("mainForecast");
@@ -252,32 +254,74 @@ async function renderFooter(forecastPromise, currentPromise) {
   const forecastData = await forecastPromise;
   const currentData = await currentPromise;
   const dayCardElements = document.getElementsByClassName("dayCard");
+  const hourCardElements = document.getElementsByClassName("hourCard");
 
-  forecastData.shift();
   // Render forecast/daily data
   for (let i = 0; i < forecastData.length; i += 1) {
     dayCardElements[i].children[0].textContent = forecastData[i].date;
     dayCardElements[i].children[1].textContent = forecastData[i].maxTemp;
     dayCardElements[i].children[2].textContent = forecastData[i].minTemp;
-    // NEED TO DO ICONS
   }
-  const iconCodes = [];
+  // Render icons
+  const dailyIconCodes = [];
   for (let i = 0; i < forecastData.length; i += 1) {
-    iconCodes.push(forecastData[i].weatherCode);
+    dailyIconCodes.push(forecastData[i].weatherCode);
   }
-  renderForecastIcons(iconCodes, false);
+  renderForecastIcons(dailyIconCodes, false);
 
   // Render current/hourly data
+  console.log(hourCardElements[0].children);
+  console.log(currentData);
+  for (let i = 0; i < currentData.length; i += 1) {
+    hourCardElements[i].children[0].textContent =
+      currentData[i].time.toLowerCase();
+    hourCardElements[i].children[1].textContent = currentData[i].temperature;
+  }
+  // Render icons
+  const hourlyIconCodes = [];
+  for (let i = 0; i < currentData.length; i += 1) {
+    hourlyIconCodes.push(currentData[i].weatherCode);
+  }
+  renderForecastIcons(hourlyIconCodes, true);
 }
 
-function switchHours() {
+function renderHourlyForecastCards(eightHourChunkId) {
+  // Hide all chunks
+  const allChunks = document.getElementsByClassName("chunk");
+  for (let i = 0; i < allChunks.length; i += 1) {
+    allChunks[i].classList.remove("show");
+  }
+  // Show selected chunk
+  const chunkToShow = document.getElementById(
+    `eightHourChunk${eightHourChunkId}`,
+  );
+  chunkToShow.classList.add("show");
+}
+
+function switchHours(dotElement) {
   // Set active dot
   const allDotElements = document.getElementsByClassName("dot");
   for (let i = 0; i < allDotElements.length; i += 1) {
     allDotElements[i].classList.remove("active");
   }
-  this.classList.add("active");
-  console.log(this, allDotElements);
+  dotElement.classList.add("active");
+  // Render correct the correct eight cards
+  renderHourlyForecastCards(dotElement.getAttribute("data-hour"));
+}
+
+function switchHourUsingArrow(rightArrow) {
+  const currentlyActiveDot = document.querySelector(".dot.active");
+
+  // If the right arrow is clicked, move the current dot to the right, looping
+  // around if the active dot is the rightmost dot, if the left arrow is clicked
+  // move the current dot to the left, looping around if the active dot is
+  // the leftmost dot
+  const currentlyActiveDotId = currentlyActiveDot.getAttribute("data-hour");
+  // calculate correct new dot id
+  const nextDotId =
+    (parseInt(currentlyActiveDotId, 10) + (rightArrow ? 1 : 2)) % 3;
+  const dotToActive = document.querySelector(`.dot[data-hour="${nextDotId}"]`);
+  switchHours(dotToActive);
 }
 
 function setupListeners() {
@@ -293,10 +337,18 @@ function setupListeners() {
 
   const switchHoursDots = document.getElementsByClassName("dot");
   for (let i = 0; i < switchHoursDots.length; i += 1) {
-    switchHoursDots[i].addEventListener("click", switchHours);
+    switchHoursDots[i].addEventListener("click", () =>
+      switchHours(switchHoursDots[i]),
+    );
   }
-
-  // const switchHoursArrows = document.getElementsByClassName("")
+  const switchHoursArrowLeft = document.getElementById("leftArrow");
+  const switchHoursArrowRight = document.getElementById("rightArrow");
+  switchHoursArrowLeft.addEventListener("click", () =>
+    switchHourUsingArrow(false),
+  );
+  switchHoursArrowRight.addEventListener("click", () =>
+    switchHourUsingArrow(true),
+  );
 }
 
 function renderWeatherData() {
@@ -309,7 +361,7 @@ function renderWeatherData() {
 
   // Footer
   renderForecastIcons([0, 0, 0, 0, 0, 0, 0], false);
-  renderForecastIcons([71, 77, 80, 85, 95, 61, 66, 0], true);
+  renderForecastIcons([0, 0, 0, 0, 0, 0, 0, 0], true);
 }
 
 // CALL THIS ON PAGE RENDER OR WHEN THE USER SEARCHES WITH A VALID INPUT

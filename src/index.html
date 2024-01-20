@@ -79,9 +79,9 @@
           <button id="hourlyButton">Hourly</button>
           <div id="hoursSelectionContainer">
             <button id="leftArrow" class="arrow"></button>
-            <div id="dot1" class="dot active"></div>
-            <div id="dot2" class="dot"></div>
-            <div id="dot3" class="dot"></div>
+            <div id="dot0" class="dot active" data-hour="0"></div>
+            <div id="dot1" class="dot" data-hour="1"></div>
+            <div id="dot2" class="dot" data-hour="2"></div>
             <button id="rightArrow" class="arrow"></button>
           </div>
         </div>
@@ -135,54 +135,157 @@
             <div id="dayIcon"></div>
           </div>
         </div>
+
         <div class="hourlyForecastGrid">
 
-          <div class="hourCard">
-            <div id="hourName">12 am</div>
-            <div id="hourTemp">25 °C</div>
-            <div id="hourIcon"></div>
+          <div id="eightHourChunk0" class="chunk show">
+            <div class="hourCard">
+              <div id="hourName">12 am1</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">1 am1</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">2 am1</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">3 am1</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">4 am1</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">5 am1</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">6 pm1</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">7 am1</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
           </div>
 
-          <div class="hourCard">
-            <div id="hourName">1 am</div>
-            <div id="hourTemp">25 °C</div>
-            <div id="hourIcon"></div>
+          <div id="eightHourChunk1" class="chunk">
+            <div class="hourCard">
+              <div id="hourName">12 am2</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">1 am2</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">2 am2</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">3 am2</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">4 am2</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">5 am2</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">6 pm2</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">7 am2</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
           </div>
 
-          <div class="hourCard">
-            <div id="hourName">2 am</div>
-            <div id="hourTemp">25 °C</div>
-            <div id="hourIcon"></div>
-          </div>
-
-          <div class="hourCard">
-            <div id="hourName">3 am</div>
-            <div id="hourTemp">25 °C</div>
-            <div id="hourIcon"></div>
-          </div>
-
-          <div class="hourCard">
-            <div id="hourName">4 am</div>
-            <div id="hourTemp">25 °C</div>
-            <div id="hourIcon"></div>
-          </div>
-
-          <div class="hourCard">
-            <div id="hourName">5 am</div>
-            <div id="hourTemp">25 °C</div>
-            <div id="hourIcon"></div>
-          </div>
-
-          <div class="hourCard">
-            <div id="hourName">6 pm</div>
-            <div id="hourTemp">25 °C</div>
-            <div id="hourIcon"></div>
-          </div>
-
-          <div class="hourCard">
-            <div id="hourName">7 am</div>
-            <div id="hourTemp">25 °C</div>
-            <div id="hourIcon"></div>
+          <div id="eightHourChunk2" class="chunk">
+            <div class="hourCard">
+              <div id="hourName">12 am3</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">1 am3</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">2 am3</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">3 am3</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">4 am3</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">5 am3</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">6 pm3</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">7 am3</div>
+              <div id="hourTemp">25 °C</div>
+              <div id="hourIcon"></div>
+            </div>
           </div>
         </div>
       </div>

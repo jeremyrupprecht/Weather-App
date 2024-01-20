@@ -23,11 +23,11 @@ async function buildFetchURL(
   const coordinateData = await coordinatePromise;
 
   // Current data in Celcius
-  let url = `https://api.open-meteo.com/v1/forecast?latitude=${coordinateData.latitude}&longitude=${coordinateData.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&forecast_days=1&timezone=${coordinateData.timezone}`;
+  let url = `https://api.open-meteo.com/v1/forecast?latitude=${coordinateData.latitude}&longitude=${coordinateData.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&forecast_days=2&timezone=${coordinateData.timezone}`;
 
   // Current data in Fahrenheit
   if (currentOrForecast === "Current" && celciusOrFahrenheit === "Fahrenheit") {
-    url = `https://api.open-meteo.com/v1/forecast?latitude=${coordinateData.latitude}&longitude=${coordinateData.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&forecast_days=1&timezone=${coordinateData.timezone}&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch`;
+    url = `https://api.open-meteo.com/v1/forecast?latitude=${coordinateData.latitude}&longitude=${coordinateData.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&forecast_days=2&timezone=${coordinateData.timezone}&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch`;
 
     // Forecast data in Celcius
   } else if (
@@ -151,34 +151,37 @@ function interpretWeatherCode(code) {
   }
 }
 
-function formatDate(string) {
-  const utcDate = new Date(`${string}Z`);
-  const formattedUtcDate = utcDate.toLocaleDateString("en-us", {
+function formatDate(timeZone) {
+  const options = {
     weekday: "long",
     year: "numeric",
     month: "short",
     day: "numeric",
-  });
-  return formattedUtcDate;
+    timeZone,
+  };
+  const formattedDate = new Date().toLocaleString("en-US", options);
+  return formattedDate;
 }
 
-function formatTime(timeZone, shortened, time) {
-  let utcDate = new Date();
-  if (time) {
-    utcDate = new Date(time);
-  }
-
-  if (shortened) {
-    utcDate.setMinutes(Math.round(utcDate.getMinutes() / 60) * 60);
-  }
+function getTimeInTimezone(timeZone) {
   const options = {
     hour: "numeric",
     minute: "numeric",
     timeZone,
+    timeZoneName: "short",
   };
-  const formattedTime = new Intl.DateTimeFormat("en-US", options).format(
-    utcDate,
-  );
+  const adjustedTime = new Date().toLocaleString("en-US", options);
+  return adjustedTime;
+}
+
+function formatTime(time) {
+  const militaryTime = new Date(time);
+  const options = {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  };
+  const formattedTime = militaryTime.toLocaleString("en-US", options);
   return formattedTime;
 }
 
@@ -212,14 +215,27 @@ function formatDay(inputString, timezone) {
   return formattedDateWithTh;
 }
 
+function isolateCurrentHourIndex(timeZone) {
+  // const currentTime = getTimeInTimezone(timeZone);
+  const currentTime = new Date().toLocaleString("en-US", {
+    hour: "numeric",
+    timeZone,
+    hour12: false, // Ensure 24-hour format
+  });
+
+  const hour = parseInt(currentTime, 10);
+  return hour;
+}
+
 async function extractUpperLeftData(weatherDataPromise) {
   const data = await weatherDataPromise;
   const mainForecast = interpretWeatherCode(data[0].current.weather_code);
+
   const upperLeftData = {
     mainForecast,
     location: data[1],
-    date: formatDate(data[0].current.time),
-    time: formatTime(data[0].current.timezone, false),
+    date: formatDate(data[0].timezone),
+    time: getTimeInTimezone(data[0].timezone),
     temperature: `${data[0].current.temperature_2m} ${data[0].current_units.temperature_2m}`,
   };
   return upperLeftData;
@@ -254,20 +270,29 @@ async function extractFooterdata(dailyDataPromise, hourlyDataPromise) {
     };
     footerData.daily.push(compiledData);
   }
+  // The api call by returns data including the current day alongside the forecast
+  // for the next seven days, get rid of the first day as that days data already
+  // exists within the "current" api request payload
+  footerData.daily.shift();
+
+  // Hours are displayed starting after the current hour. Find that hour
+  // so that the next 24 hours after it can be displayed
+  const currentHour = isolateCurrentHourIndex(hourlyData[0].timezone);
+  const validCurrentHour = (currentHour + 24) % 24;
 
   // Fill in hourly data
-  for (let i = 0; i < hourlyData[0].hourly.temperature_2m.length; i += 1) {
+  for (let i = 0; i < 25; i += 1) {
+    const hourIndex = (validCurrentHour + i) % 24;
     const compiledData = {
-      time: formatTime(
-        hourlyData[0].timezone,
-        true,
-        hourlyData[0].hourly.time[i],
-      ),
-      temperature: `${hourlyData[0].hourly.temperature_2m[i]} ${hourlyData[0].hourly_units.temperature_2m}`,
-      weatherCode: hourlyData[0].hourly.weather_code[i],
+      time: formatTime(hourlyData[0].hourly.time[hourIndex]),
+      temperature: `${hourlyData[0].hourly.temperature_2m[hourIndex]} ${hourlyData[0].hourly_units.temperature_2m}`,
+      weatherCode: hourlyData[0].hourly.weather_code[hourIndex],
     };
     footerData.hourly.push(compiledData);
   }
+  // The api call returns data for the current hour, this is already displayed
+  // so we don't need to display it below (same logic as with the current day)
+  footerData.hourly.shift();
   return footerData;
 }
 
