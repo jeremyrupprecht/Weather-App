@@ -5,71 +5,68 @@ import {
   extractUpperRightData,
   extractFooterdata,
 } from "./apiHandler";
-import {
-  setupPage,
-  renderUpperLeftCorner,
-  renderUpperRightCorner,
-  renderFooter,
-} from "./domHandler";
+import { renderIcons, setupListeners, renderPage } from "./domHandler";
 
-function showErrorModal() {
-  const errorModal = document.getElementById("errorModal");
-  errorModal.classList.add("show");
-}
-
-// Render inital page with weather data
-async function renderPage(dataPromise, celcius) {
+async function extractData(data) {
   try {
-    const data = await dataPromise;
-    let upperLeftData;
-    let upperRightData;
-    let footerData;
+    const upperLeftDataCelcius = await extractUpperLeftData(
+      data.currentCelcius,
+    );
+    const upperRightDataCelcius = await extractUpperRightData(
+      data.currentCelcius,
+    );
+    const footerDataCelcius = await extractFooterdata(
+      data.forecastCelcius,
+      data.currentCelcius,
+    );
 
-    if (celcius) {
-      upperLeftData = await extractUpperLeftData(data.currentCelcius);
-      upperRightData = await extractUpperRightData(data.currentCelcius);
-      footerData = await extractFooterdata(
-        data.forecastCelcius,
-        data.currentCelcius,
-      );
-    } else {
-      upperLeftData = await extractUpperLeftData(data.currentFahrenheit);
-      upperRightData = await extractUpperRightData(data.currentFahrenheit);
-      footerData = await extractFooterdata(
-        data.forecastFahrenheit,
-        data.currentFahrenheit,
-      );
-    }
-    renderUpperLeftCorner(upperLeftData);
-    renderUpperRightCorner(upperRightData);
-    renderFooter(footerData.daily, footerData.hourly);
-
-    // Hide everything but the background until the fetched api data loads, if the
-    // fetch call fails, then show an error message
-    const mainContainer = document.getElementById("mainContainer");
-    mainContainer.classList.add("show");
-    return "All good";
+    const upperLeftDataFahrenheit = await extractUpperLeftData(
+      data.currentFahrenheit,
+    );
+    const upperRightDataFahrenheit = await extractUpperRightData(
+      data.currentFahrenheit,
+    );
+    const footerDataFahrenheit = await extractFooterdata(
+      data.forecastFahrenheit,
+      data.currentFahrenheit,
+    );
+    return {
+      upperLeftDataCelcius,
+      upperRightDataCelcius,
+      footerDataCelcius,
+      upperLeftDataFahrenheit,
+      upperRightDataFahrenheit,
+      footerDataFahrenheit,
+    };
   } catch (error) {
-    const mainContainer = document.getElementById("mainContainer");
-    mainContainer.classList.remove("show");
-    showErrorModal();
     return new Promise((resolve, reject) => {
-      reject(new Error("Error rendering weather data"));
+      reject(new Error("Error extracting weather data"));
     });
   }
 }
 
-async function fetchDataOnPageLoad(location) {
+const renderCelcius = true;
+let extractedData;
+async function fetchDataAndRenderPage(location) {
   try {
-    const data = await getWeatherData(location);
-    return data;
+    const fetchedData = await getWeatherData(location);
+    extractedData = await extractData(fetchedData);
+    renderPage(
+      extractedData.upperLeftDataCelcius,
+      extractedData.upperRightDataCelcius,
+      extractedData.footerDataCelcius,
+    );
+    return "Good to Go!";
   } catch (error) {
+    // Call to render the error modal
+    renderPage("", "", "");
     return new Promise((resolve, reject) => {
-      reject(new Error("Error while fetching weather data", error));
+      reject(
+        new Error("Error while fetching and rendering weather data", error),
+      );
     });
   }
 }
-
 /*
 -Only fetch weather data:
     -On page load
@@ -78,13 +75,14 @@ async function fetchDataOnPageLoad(location) {
     NOT
     -when the page is rerendered in celcius or fahrenheit
 */
-setupPage();
-const fetchedData = fetchDataOnPageLoad("Calgary");
-// Render initial page in celcius
-renderPage(fetchedData, true)
-  .then(() => {
-    console.log("Render successful!");
+renderIcons();
+setupListeners();
+fetchDataAndRenderPage("Burnaby")
+  .then((success) => {
+    console.log(success);
+    window.renderCelcius = renderCelcius;
+    window.extractedData = extractedData;
   })
   .catch((error) => {
-    console.log("Render falure!", error);
+    console.log(error);
   });

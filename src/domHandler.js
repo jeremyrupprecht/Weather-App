@@ -35,8 +35,6 @@ import rainShowersC from "./images/weatherCodeIconsCropped/rainShowersCropped.sv
 import snowShowersC from "./images/weatherCodeIconsCropped/snowShowersCropped.svg";
 import thunderStormBothC from "./images/weatherCodeIconsCropped/thunderStormBothCropped.svg";
 
-// import getWeatherData from "./apiHandler";
-
 const weatherIcons = [
   clearSky,
   partlyCloudy,
@@ -190,6 +188,8 @@ function renderForecastIcons(iconCodes, hourly) {
 
 function renderCurrentIcon(iconCode) {
   const mainIconContainer = document.getElementById("mainIcon");
+  // Clear any existing icons
+  mainIconContainer.innerHTML = "";
   renderImage(mainIconContainer, interpretWeatherCode(iconCode, true));
 }
 
@@ -322,6 +322,47 @@ function switchHourUsingArrow(rightArrow) {
   switchHours(dotToActive);
 }
 
+function showErrorModal() {
+  const errorModal = document.getElementById("errorModal");
+  errorModal.classList.add("show");
+}
+
+async function renderPage(upperLeftData, upperRightData, footerData) {
+  const mainContainer = document.getElementById("mainContainer");
+  if (upperLeftData && upperRightData && footerData) {
+    renderUpperLeftCorner(upperLeftData);
+    renderUpperRightCorner(upperRightData);
+    renderFooter(footerData.daily, footerData.hourly);
+    // Hide the page but the background until the fetched api data loads, if the
+    // fetch call fails, then show an error message
+    mainContainer.classList.add("show");
+  } else {
+    mainContainer.classList.remove("show");
+    showErrorModal();
+  }
+}
+
+function switchTemperatureUnit() {
+  // Toggle between Celsius and Fahrenheit
+  window.renderCelcius = !window.renderCelcius;
+
+  // Get the appropriate data based on the temperature unit
+  const upperLeftData = window.renderCelcius
+    ? window.extractedData.upperLeftDataCelcius
+    : window.extractedData.upperLeftDataFahrenheit;
+
+  const upperRightData = window.renderCelcius
+    ? window.extractedData.upperRightDataCelcius
+    : window.extractedData.upperRightDataFahrenheit;
+
+  const footerData = window.renderCelcius
+    ? window.extractedData.footerDataCelcius
+    : window.extractedData.footerDataFahrenheit;
+
+  // Call renderPage with the updated data
+  renderPage(upperLeftData, upperRightData, footerData);
+}
+
 function setupListeners() {
   const dailyForecastButton = document.getElementById("dailyButton");
   dailyForecastButton.addEventListener("click", () => {
@@ -350,21 +391,12 @@ function setupListeners() {
     switchHourUsingArrow(true),
   );
 
-  // const switchCelciusFahrenheit = document.getElementById(
-  //   "switchTemperatureButton",
-  // );
-  // switchCelciusFahrenheit.addEventListener("click" )
+  const switchCelciusFahrenheit = document.getElementById(
+    "switchTemperatureButton",
+  );
+  switchCelciusFahrenheit.addEventListener("click", () => {
+    switchTemperatureUnit();
+  });
 }
 
-// CALL THIS ON PAGE RENDER OR WHEN THE USER SEARCHES WITH A VALID INPUT
-function setupPage() {
-  renderIcons();
-  setupListeners();
-}
-
-export {
-  setupPage,
-  renderUpperLeftCorner,
-  renderUpperRightCorner,
-  renderFooter,
-};
+export { renderIcons, setupListeners, renderPage };
