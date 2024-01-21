@@ -230,13 +230,13 @@ function isolateCurrentHourIndex(timeZone) {
 async function extractUpperLeftData(weatherDataPromise) {
   const data = await weatherDataPromise;
   const mainForecast = interpretWeatherCode(data[0].current.weather_code);
-
   const upperLeftData = {
     mainForecast,
     location: data[1],
     date: formatDate(data[0].timezone),
     time: getTimeInTimezone(data[0].timezone),
     temperature: `${data[0].current.temperature_2m} ${data[0].current_units.temperature_2m}`,
+    iconCode: data[0].current.weather_code,
   };
   return upperLeftData;
 }

@@ -17,6 +17,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 html {
@@ -41,12 +42,32 @@ html {
   background-position: center center;
 }
 
+#errorModal {
+  display: none;
+  position: absolute;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.568);
+  border-radius: 10px;
+
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%,-50%);
+}
+
+#errorModal.show {
+  display: block;
+}
+
 #mainContainer {
   height: 90%;
   width: 90%;
 
-  display: grid;
+  display: none;
   grid-template: 2fr 1fr / 1fr 1fr;
+}
+
+#mainContainer.show {
+  display: grid;
 }
 
 /* Upper Left Display */

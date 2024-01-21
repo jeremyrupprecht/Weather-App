@@ -221,7 +221,6 @@ function toggleForecastCards(toggleHourlyCards) {
 
 // }
 
-// MAYBE SPLIT THIS INTO 2 FUNCTIONS???
 async function renderUpperLeftCorner(dataPromise) {
   const data = await dataPromise;
   const mainForecastElement = document.getElementById("mainForecast");
@@ -235,6 +234,7 @@ async function renderUpperLeftCorner(dataPromise) {
   dateElement.textContent = data.date;
   timeElement.textContent = data.time;
   temperatureElement.textContent = data.temperature;
+  renderCurrentIcon(data.iconCode);
 }
 
 async function renderUpperRightCorner(dataPromise) {
@@ -270,8 +270,6 @@ async function renderFooter(forecastPromise, currentPromise) {
   renderForecastIcons(dailyIconCodes, false);
 
   // Render current/hourly data
-  console.log(hourCardElements[0].children);
-  console.log(currentData);
   for (let i = 0; i < currentData.length; i += 1) {
     hourCardElements[i].children[0].textContent =
       currentData[i].time.toLowerCase();
@@ -335,6 +333,8 @@ function setupListeners() {
     toggleForecastCards(true);
   });
 
+  // The daily forecast shows the next 24 hours after the current hour,
+  // These are shown in chunks of 8 hours each
   const switchHoursDots = document.getElementsByClassName("dot");
   for (let i = 0; i < switchHoursDots.length; i += 1) {
     switchHoursDots[i].addEventListener("click", () =>
@@ -349,27 +349,17 @@ function setupListeners() {
   switchHoursArrowRight.addEventListener("click", () =>
     switchHourUsingArrow(true),
   );
-}
 
-function renderWeatherData() {
-  // Get weather data for each corner and render it
-
-  // Upper left corner
-  renderCurrentIcon(56);
-
-  // Upper right corner
-
-  // Footer
-  renderForecastIcons([0, 0, 0, 0, 0, 0, 0], false);
-  renderForecastIcons([0, 0, 0, 0, 0, 0, 0, 0], true);
+  // const switchCelciusFahrenheit = document.getElementById(
+  //   "switchTemperatureButton",
+  // );
+  // switchCelciusFahrenheit.addEventListener("click" )
 }
 
 // CALL THIS ON PAGE RENDER OR WHEN THE USER SEARCHES WITH A VALID INPUT
 function setupPage() {
   renderIcons();
   setupListeners();
-  // REMOVE THIS ONCE YOU GET RENDERING WORKING!
-  renderWeatherData();
 }
 
 export {
