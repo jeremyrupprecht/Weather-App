@@ -4,6 +4,7 @@ import {
   extractUpperLeftData,
   extractUpperRightData,
   extractFooterdata,
+  setupSearchBarListener,
 } from "./apiHandler";
 import { renderIcons, setupListeners, renderPage } from "./domHandler";
 
@@ -77,7 +78,8 @@ async function fetchDataAndRenderPage(location) {
 */
 renderIcons();
 setupListeners();
-fetchDataAndRenderPage("Burnaby")
+setupSearchBarListener();
+fetchDataAndRenderPage("Calgary")
   .then((success) => {
     console.log(success);
     window.renderCelcius = renderCelcius;

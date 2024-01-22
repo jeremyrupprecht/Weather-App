@@ -11,7 +11,10 @@ async function getLocationCoordinates(location) {
     }
     throw new Error("Error fetching location coordiantes");
   } catch (error) {
-    throw new Error("Error fetching location coordiantes", error);
+    console.log("Error fetching location coordinates");
+    return new Promise((resolve, reject) => {
+      reject(new Error("Error fetching location coordinates"));
+    });
   }
 }
 
@@ -56,7 +59,10 @@ async function fetchCurrentWeatherData(urlPromise) {
     }
     throw new Error("Error while fetching weather data");
   } catch (error) {
-    throw new Error("Error while fetching weather data", error);
+    console.log("Error while fetching weather data");
+    return new Promise((resolve, reject) => {
+      reject(new Error("Error while fetching weather data"));
+    });
   }
 }
 
@@ -82,9 +88,10 @@ async function getWeatherData(location) {
     };
     return mappedWeatherData;
   } catch (error) {
-    console.log("Error while getting weather data", error);
-    return error;
-    // throw new Error("Error while getting weather data", error);
+    console.log("Error while building URLs and fetching weather data");
+    return new Promise((resolve, reject) => {
+      reject(new Error("Error while building URLs and fetching weather data"));
+    });
   }
 }
 
@@ -296,9 +303,29 @@ async function extractFooterdata(dailyDataPromise, hourlyDataPromise) {
   return footerData;
 }
 
+function searchLocation() {
+  const searchBarInput = document.getElementById("searchBar");
+  console.log(searchBarInput.value);
+}
+
+function setupSearchBarListener() {
+  const form = document.getElementById("searchContainer");
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    searchLocation();
+  });
+
+  const searchBarSubmitButton = document.getElementById("searchIconContainer");
+  searchBarSubmitButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    searchLocation();
+  });
+}
+
 export {
   getWeatherData,
   extractUpperLeftData,
   extractUpperRightData,
   extractFooterdata,
+  setupSearchBarListener,
 };
