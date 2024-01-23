@@ -5,13 +5,14 @@
     <title>Weather App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script defer src="bundle.js"></script>
-    <!-- <link rel="shortcut icon" href="src/images/weatherFavIcon.svg" type="image/x-icon"> -->
+    <link rel="shortcut icon" type="image/x-icon" href="weatherFavIconIco.ico">
   </head>
   <body>
     <div id="backgroundContainer"></div>
     <div id="errorModal">
       Oops! We're sorry, but we couldn't retrieve the latest weather data at the moment. Please check your internet connection, refresh the page, and try again. If the issue persists, it could be a temporary problem with our weather service. You can also manually refresh or come back later.
     </div>
+    <div id="loadingModal"></div>
     <div id="mainContainer">
       
       <div id="upperLeft">
