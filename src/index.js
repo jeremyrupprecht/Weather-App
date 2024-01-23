@@ -14,6 +14,8 @@ import {
   removeErrorModal,
   showInvalidInputModal,
   hideInvalidInputModal,
+  showLoadingModal,
+  hideLoadingModal,
 } from "./domHandler";
 import handle from "./errorHandler";
 
@@ -124,6 +126,8 @@ function setupSearchBarListener() {
     NOT
     -when the page is rerendered in celcius or fahrenheit
 */
+
+showLoadingModal();
 renderIcons();
 setupListeners();
 setupSearchBarListener();
@@ -133,6 +137,7 @@ fetchDataAndRenderPage("Calgary")
     window.renderCelcius = renderCelcius;
     window.extractedData = extractedData;
     removeErrorModal();
+    hideLoadingModal();
   })
   .catch((error) => {
     console.log(error);

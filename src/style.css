@@ -58,6 +58,18 @@ html {
   display: block;
 }
 
+#loadingModal {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%,-50%);
+}
+
+#loadingModal.show {
+  display: block;
+}
+
 #mainContainer {
   height: 90%;
   width: 90%;

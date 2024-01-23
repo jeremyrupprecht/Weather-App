@@ -97,10 +97,9 @@ function renderIcons() {
   const rightIconContainer = document.getElementById("rightArrow");
   renderImage(rightIconContainer, rightArrowIcon);
 
-  // Testing...
-
-  // const container = document.getElementById("upperLeft");
-  // renderImage(container, loadingGif);
+  // Loading gif
+  const container = document.getElementById("loadingModal");
+  renderImage(container, loadingGif);
 }
 
 function parseWeatherCodeToImage(code, cropped) {
@@ -322,6 +321,16 @@ function hideInvalidInputModal() {
   invalidInput.classList.remove("show");
 }
 
+function showLoadingModal() {
+  const loadingModal = document.getElementById("loadingModal");
+  loadingModal.classList.add("show");
+}
+
+function hideLoadingModal() {
+  const loadingModal = document.getElementById("loadingModal");
+  loadingModal.classList.remove("show");
+}
+
 function renderPage(upperLeftData, upperRightData, footerData) {
   const mainContainer = document.getElementById("mainContainer");
   if (upperLeftData && upperRightData && footerData) {
@@ -402,4 +411,6 @@ export {
   removeErrorModal,
   showInvalidInputModal,
   hideInvalidInputModal,
+  showLoadingModal,
+  hideLoadingModal,
 };
