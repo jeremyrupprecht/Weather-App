@@ -2,9 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Testing Title......</title>
+    <title>Weather App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script defer src="bundle.js"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="<%=htmlWebpackPlugin.files.favicon%>">
   </head>
   <body>
     <div id="backgroundContainer"></div>
@@ -39,6 +40,8 @@
           <input type="text" id="searchBar" placeholder="Search Location..." minlength="2">
           <div id="searchIconContainer"></div>
         </form>
+        <div id="locationNotFound">Location not found.
+          Search must be in the form of "City"</div>
       </div>
 
       <div id="upperRight">

@@ -6,6 +6,7 @@ import precipitationIcon from "./images/precipitationIcon.svg";
 import windSpeedIcon from "./images/windIcon.svg";
 import leftArrowIcon from "./images/arrowLeft.svg";
 import rightArrowIcon from "./images/arrowRight.svg";
+import loadingGif from "./images/loading.gif";
 
 // Weather Icons
 import clearSky from "./images/weatherCodeIcons/clearSky.svg";
@@ -65,31 +66,9 @@ const weatherIconsCropped = [
   thunderStormBothC,
 ];
 
-// function component() {
-//   // Test CSS
-//   const element = document.createElement("div");
-//   element.innerHTML = "Testing...";
-//   element.classList.add("hello");
-
-//   // Test Asset loader
-//   const imageElement = new Image();
-//   imageElement.src = testImage;
-//   element.appendChild(imageElement);
-
-//   // Test source map --> uncomment to test tracking
-//   // cosnole.log('I get called from print.js!');
-
-//   // Test Eslint --> uncomment to see suggestions
-//   // if (true) {}
-
-//   return element;
-// }
-// document.body.appendChild(component());
-
 function renderImage(parent, image) {
   const imageElement = new Image();
   imageElement.src = image;
-  // imageElement.classList.add("testBorder");
   parent.appendChild(imageElement);
 }
 
@@ -117,9 +96,14 @@ function renderIcons() {
 
   const rightIconContainer = document.getElementById("rightArrow");
   renderImage(rightIconContainer, rightArrowIcon);
+
+  // Testing...
+
+  // const container = document.getElementById("upperLeft");
+  // renderImage(container, loadingGif);
 }
 
-function interpretWeatherCode(code, cropped) {
+function parseWeatherCodeToImage(code, cropped) {
   let imagesToUse = weatherIcons;
   if (cropped) {
     imagesToUse = weatherIconsCropped;
@@ -182,7 +166,7 @@ function renderForecastIcons(iconCodes, hourly) {
       cardsCollection[i].children[cardsCollection[i].children.length - 1];
     // Clear previous icon
     dayIconContainer.innerHTML = "";
-    renderImage(dayIconContainer, interpretWeatherCode(iconCodes[i], false));
+    renderImage(dayIconContainer, parseWeatherCodeToImage(iconCodes[i], false));
   }
 }
 
@@ -190,7 +174,7 @@ function renderCurrentIcon(iconCode) {
   const mainIconContainer = document.getElementById("mainIcon");
   // Clear any existing icons
   mainIconContainer.innerHTML = "";
-  renderImage(mainIconContainer, interpretWeatherCode(iconCode, true));
+  renderImage(mainIconContainer, parseWeatherCodeToImage(iconCode, true));
 }
 
 function toggleForecastCards(toggleHourlyCards) {
@@ -216,10 +200,6 @@ function toggleForecastCards(toggleHourlyCards) {
     hoursSelectionButtons.classList.remove("show");
   }
 }
-
-// function reRenderInCelciusOrFahrenheit() {
-
-// }
 
 async function renderUpperLeftCorner(dataPromise) {
   const data = await dataPromise;
@@ -327,7 +307,22 @@ function showErrorModal() {
   errorModal.classList.add("show");
 }
 
-async function renderPage(upperLeftData, upperRightData, footerData) {
+function removeErrorModal() {
+  const errorModal = document.getElementById("errorModal");
+  errorModal.classList.remove("show");
+}
+
+function showInvalidInputModal() {
+  const invalidInput = document.getElementById("locationNotFound");
+  invalidInput.classList.add("show");
+}
+
+function hideInvalidInputModal() {
+  const invalidInput = document.getElementById("locationNotFound");
+  invalidInput.classList.remove("show");
+}
+
+function renderPage(upperLeftData, upperRightData, footerData) {
   const mainContainer = document.getElementById("mainContainer");
   if (upperLeftData && upperRightData && footerData) {
     renderUpperLeftCorner(upperLeftData);
@@ -399,4 +394,12 @@ function setupListeners() {
   });
 }
 
-export { renderIcons, setupListeners, renderPage };
+export {
+  renderIcons,
+  setupListeners,
+  renderPage,
+  showErrorModal,
+  removeErrorModal,
+  showInvalidInputModal,
+  hideInvalidInputModal,
+};

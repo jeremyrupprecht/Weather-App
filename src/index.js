@@ -4,70 +4,118 @@ import {
   extractUpperLeftData,
   extractUpperRightData,
   extractFooterdata,
-  setupSearchBarListener,
+  searchLocation,
 } from "./apiHandler";
-import { renderIcons, setupListeners, renderPage } from "./domHandler";
+import {
+  renderIcons,
+  setupListeners,
+  renderPage,
+  showErrorModal,
+  removeErrorModal,
+  showInvalidInputModal,
+  hideInvalidInputModal,
+} from "./domHandler";
+import handle from "./errorHandler";
 
 async function extractData(data) {
-  try {
-    const upperLeftDataCelcius = await extractUpperLeftData(
-      data.currentCelcius,
-    );
-    const upperRightDataCelcius = await extractUpperRightData(
-      data.currentCelcius,
-    );
-    const footerDataCelcius = await extractFooterdata(
-      data.forecastCelcius,
-      data.currentCelcius,
-    );
+  // Extract both the Celecius and Fahrenheit data only once, then just
+  // display/reredender the desired temperature value in domHandler
+  const [upperLeftDataCelcius, error1] = await handle(
+    extractUpperLeftData(data.currentCelcius),
+  );
+  const [upperRightDataCelcius, error2] = await handle(
+    extractUpperRightData(data.currentCelcius),
+  );
+  const [footerDataCelcius, error3] = await handle(
+    extractFooterdata(data.forecastCelcius, data.currentCelcius),
+  );
 
-    const upperLeftDataFahrenheit = await extractUpperLeftData(
-      data.currentFahrenheit,
-    );
-    const upperRightDataFahrenheit = await extractUpperRightData(
-      data.currentFahrenheit,
-    );
-    const footerDataFahrenheit = await extractFooterdata(
-      data.forecastFahrenheit,
-      data.currentFahrenheit,
-    );
-    return {
-      upperLeftDataCelcius,
-      upperRightDataCelcius,
-      footerDataCelcius,
-      upperLeftDataFahrenheit,
-      upperRightDataFahrenheit,
-      footerDataFahrenheit,
-    };
-  } catch (error) {
-    return new Promise((resolve, reject) => {
-      reject(new Error("Error extracting weather data"));
-    });
+  const [upperLeftDataFahrenheit, error4] = await handle(
+    extractUpperLeftData(data.currentFahrenheit),
+  );
+  const [upperRightDataFahrenheit, error5] = await handle(
+    extractUpperRightData(data.currentFahrenheit),
+  );
+  const [footerDataFahrenheit, error6] = await handle(
+    extractFooterdata(data.forecastFahrenheit, data.currentFahrenheit),
+  );
+
+  if (error1 || error2 || error3 || error4 || error5 || error6) {
+    throw new Error("Error while extracting weather data");
   }
+
+  return {
+    upperLeftDataCelcius,
+    upperRightDataCelcius,
+    footerDataCelcius,
+    upperLeftDataFahrenheit,
+    upperRightDataFahrenheit,
+    footerDataFahrenheit,
+  };
 }
 
 const renderCelcius = true;
 let extractedData;
+
 async function fetchDataAndRenderPage(location) {
-  try {
-    const fetchedData = await getWeatherData(location);
-    extractedData = await extractData(fetchedData);
-    renderPage(
-      extractedData.upperLeftDataCelcius,
-      extractedData.upperRightDataCelcius,
-      extractedData.footerDataCelcius,
-    );
-    return "Good to Go!";
-  } catch (error) {
-    // Call to render the error modal
-    renderPage("", "", "");
-    return new Promise((resolve, reject) => {
-      reject(
-        new Error("Error while fetching and rendering weather data", error),
-      );
-    });
-  }
+  // Fetch data
+  const [fetchedData, fetchingError] = await handle(getWeatherData(location));
+  if (fetchingError) throw new Error(fetchingError);
+
+  // Extract data
+  const [extractedDataLocal, extractingError] = await handle(
+    extractData(fetchedData),
+  );
+  if (extractingError) throw new Error(extractingError);
+  extractedData = extractedDataLocal;
+
+  // Render data
+  renderPage(
+    extractedData.upperLeftDataCelcius,
+    extractedData.upperRightDataCelcius,
+    extractedData.footerDataCelcius,
+  );
+  return "Fetch and render success!";
 }
+
+function clearSearchBar() {
+  const searchBarInput = document.getElementById("searchBar");
+  searchBarInput.value = "";
+}
+
+function executeSearch(locationString) {
+  fetchDataAndRenderPage(locationString)
+    .then(() => {
+      window.renderCelcius = renderCelcius;
+      window.extractedData = extractedData;
+      hideInvalidInputModal();
+    })
+    .catch(() => {
+      showInvalidInputModal();
+    });
+  clearSearchBar();
+}
+
+function setupSearchBarListener() {
+  const form = document.getElementById("searchContainer");
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const locationString = searchLocation();
+    if (locationString) {
+      executeSearch(locationString);
+    }
+  });
+
+  const searchBarSubmitButton = document.getElementById("searchIconContainer");
+  searchBarSubmitButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    const locationString = searchLocation();
+    if (locationString) {
+      executeSearch(locationString);
+    }
+  });
+}
+
 /*
 -Only fetch weather data:
     -On page load
@@ -80,11 +128,13 @@ renderIcons();
 setupListeners();
 setupSearchBarListener();
 fetchDataAndRenderPage("Calgary")
-  .then((success) => {
-    console.log(success);
+  .then(() => {
+    console.log("Inital fetch and render success!");
     window.renderCelcius = renderCelcius;
     window.extractedData = extractedData;
+    removeErrorModal();
   })
   .catch((error) => {
     console.log(error);
+    showErrorModal();
   });

@@ -1,20 +1,31 @@
+import handle from "./errorHandler";
+import {
+  formatDate,
+  getTimeInTimezone,
+  formatTime,
+  formatDay,
+  isolateCurrentHourIndex,
+} from "./dateAndTimeAuxFunctions";
+
 async function getLocationCoordinates(location) {
-  try {
-    const coordinatesPromse = await fetch(
+  // Fetch coordinates
+  const [coordinatesPromse, error] = await handle(
+    fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${location}&count=1&language=en&format=json`,
-    );
-    const coordinatesObject = await coordinatesPromse.json();
-    if (coordinatesObject.results) {
-      const { name, latitude, longitude, timezone } =
-        coordinatesObject.results[0];
-      return { name, latitude, longitude, timezone };
-    }
-    throw new Error("Error fetching location coordiantes");
-  } catch (error) {
-    console.log("Error fetching location coordinates");
-    return new Promise((resolve, reject) => {
-      reject(new Error("Error fetching location coordinates"));
-    });
+    ),
+  );
+
+  // Check for valid response
+  if (error)
+    throw new Error("Error while fetching location coordinates", error);
+  const response = await coordinatesPromse.json();
+  if (!response.results) {
+    throw new Error("Error in API response", response.status);
+
+    // Return valid coordinates
+  } else {
+    const { name, latitude, longitude, timezone } = response.results[0];
+    return { name, latitude, longitude, timezone };
   }
 }
 
@@ -51,51 +62,46 @@ async function buildFetchURL(
 
 async function fetchCurrentWeatherData(urlPromise) {
   const url = await urlPromise;
-  try {
-    const weatherDataResponse = await fetch(url, { mode: "cors" });
-    if (!weatherDataResponse.error) {
-      const weatherDataJSON = await weatherDataResponse.json();
-      return weatherDataJSON;
-    }
-    throw new Error("Error while fetching weather data");
-  } catch (error) {
-    console.log("Error while fetching weather data");
-    return new Promise((resolve, reject) => {
-      reject(new Error("Error while fetching weather data"));
-    });
+  const [weatherDataResponse, error] = await handle(
+    fetch(url, { mode: "cors" }),
+  );
+  if (error) throw new Error("Error while fetching weather data", error);
+
+  if (!weatherDataResponse.error) {
+    const weatherDataJSON = await weatherDataResponse.json();
+    return weatherDataJSON;
   }
+  throw new Error("Error while fetching weather data");
 }
 
 async function getWeatherData(location) {
-  try {
-    const coordinates = await getLocationCoordinates(location);
-    const url1 = buildFetchURL(coordinates, "Current", "Celcius");
-    const url2 = buildFetchURL(coordinates, "Current", "Fahrenheit");
-    const url3 = buildFetchURL(coordinates, "Forecast", "Celcius");
-    const url4 = buildFetchURL(coordinates, "Forecast", "Fahrenheit");
+  // Grab coordinates
+  const [coordinates, error] = await handle(getLocationCoordinates(location));
+  if (error) throw new Error(error);
 
-    const allWeatherData = await Promise.all([
-      fetchCurrentWeatherData(url1),
-      fetchCurrentWeatherData(url2),
-      fetchCurrentWeatherData(url3),
-      fetchCurrentWeatherData(url4),
-    ]);
-    const mappedWeatherData = {
-      currentCelcius: [allWeatherData[0], coordinates.name],
-      currentFahrenheit: [allWeatherData[1], coordinates.name],
-      forecastCelcius: allWeatherData[2],
-      forecastFahrenheit: allWeatherData[3],
-    };
-    return mappedWeatherData;
-  } catch (error) {
-    console.log("Error while building URLs and fetching weather data");
-    return new Promise((resolve, reject) => {
-      reject(new Error("Error while building URLs and fetching weather data"));
-    });
-  }
+  // Don't need additional error checking for these as any issues
+  // with coordinates will already have been caught right above
+  const url1 = buildFetchURL(coordinates, "Current", "Celcius");
+  const url2 = buildFetchURL(coordinates, "Current", "Fahrenheit");
+  const url3 = buildFetchURL(coordinates, "Forecast", "Celcius");
+  const url4 = buildFetchURL(coordinates, "Forecast", "Fahrenheit");
+
+  const allWeatherData = await Promise.all([
+    fetchCurrentWeatherData(url1),
+    fetchCurrentWeatherData(url2),
+    fetchCurrentWeatherData(url3),
+    fetchCurrentWeatherData(url4),
+  ]);
+  const mappedWeatherData = {
+    currentCelcius: [allWeatherData[0], coordinates.name],
+    currentFahrenheit: [allWeatherData[1], coordinates.name],
+    forecastCelcius: allWeatherData[2],
+    forecastFahrenheit: allWeatherData[3],
+  };
+  return mappedWeatherData;
 }
 
-function interpretWeatherCode(code) {
+function parseWeatherCodeToString(code) {
   switch (code) {
     case 0:
       return "Clear Sky";
@@ -158,85 +164,9 @@ function interpretWeatherCode(code) {
   }
 }
 
-function formatDate(timeZone) {
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone,
-  };
-  const formattedDate = new Date().toLocaleString("en-US", options);
-  return formattedDate;
-}
-
-function getTimeInTimezone(timeZone) {
-  const options = {
-    hour: "numeric",
-    minute: "numeric",
-    timeZone,
-    timeZoneName: "short",
-  };
-  const adjustedTime = new Date().toLocaleString("en-US", options);
-  return adjustedTime;
-}
-
-function formatTime(time) {
-  const militaryTime = new Date(time);
-  const options = {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  };
-  const formattedTime = militaryTime.toLocaleString("en-US", options);
-  return formattedTime;
-}
-
-// Function to get the suffix for the day (e.g., "st", "nd", "rd", "th")
-function getNumberSuffix(day) {
-  if (day >= 11 && day <= 13) {
-    return "th";
-  }
-  switch (day % 10) {
-    case 1:
-      return "st";
-    case 2:
-      return "nd";
-    case 3:
-      return "rd";
-    default:
-      return "th";
-  }
-}
-
-function formatDay(inputString, timezone) {
-  const inputDate = new Date(`${inputString}T00:00:00`);
-  const options = {
-    weekday: "long",
-    timeZone: timezone,
-  };
-  const formattedDate = inputDate.toLocaleString("en-US", options);
-  const dayOfMonth = inputDate.getDate();
-  const suffix = getNumberSuffix(dayOfMonth);
-  const formattedDateWithTh = `${formattedDate} ${dayOfMonth}${suffix}`;
-  return formattedDateWithTh;
-}
-
-function isolateCurrentHourIndex(timeZone) {
-  // const currentTime = getTimeInTimezone(timeZone);
-  const currentTime = new Date().toLocaleString("en-US", {
-    hour: "numeric",
-    timeZone,
-    hour12: false, // Ensure 24-hour format
-  });
-
-  const hour = parseInt(currentTime, 10);
-  return hour;
-}
-
 async function extractUpperLeftData(weatherDataPromise) {
   const data = await weatherDataPromise;
-  const mainForecast = interpretWeatherCode(data[0].current.weather_code);
+  const mainForecast = parseWeatherCodeToString(data[0].current.weather_code);
   const upperLeftData = {
     mainForecast,
     location: data[1],
@@ -305,21 +235,13 @@ async function extractFooterdata(dailyDataPromise, hourlyDataPromise) {
 
 function searchLocation() {
   const searchBarInput = document.getElementById("searchBar");
-  console.log(searchBarInput.value);
-}
-
-function setupSearchBarListener() {
-  const form = document.getElementById("searchContainer");
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    searchLocation();
-  });
-
-  const searchBarSubmitButton = document.getElementById("searchIconContainer");
-  searchBarSubmitButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    searchLocation();
-  });
+  const locationString = searchBarInput.value;
+  // Don't search for empty strings or those containing only white space
+  const stringIsNotOnlyWhiteSpace = locationString.replace(/\s/g, "").length;
+  if (locationString && stringIsNotOnlyWhiteSpace) {
+    return locationString;
+  }
+  return undefined;
 }
 
 export {
@@ -327,5 +249,5 @@ export {
   extractUpperLeftData,
   extractUpperRightData,
   extractFooterdata,
-  setupSearchBarListener,
+  searchLocation,
 };

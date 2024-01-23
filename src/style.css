@@ -264,7 +264,7 @@ input[type="text"]:focus {
   align-items: center;
 }
 
-#dayName, #dayMaxTemp, #hourTemp {
+#dayName, #dayMaxTemp, #dayMinTemp, #hourTemp, #hourName {
   white-space: nowrap;
 }
 
@@ -318,4 +318,13 @@ input[type="text"]:focus {
 
 #hourIcon {
   grid-row: 4 / 5;
+}
+
+#locationNotFound {
+  font-size: 0.8rem;
+  display: none;
+}
+
+#locationNotFound.show {
+  display: block;
 }
