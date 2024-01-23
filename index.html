@@ -1,0 +1,302 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Weather App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script defer src="bundle.js"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="weatherFavIconIco.ico">
+  </head>
+  <body>
+    <div id="backgroundContainer"></div>
+    <div id="errorModal">
+      Oops! We're sorry, but we couldn't retrieve the latest weather data at the moment. Please check your internet connection, refresh the page, and try again. If the issue persists, it could be a temporary problem with our weather service. You can also manually refresh or come back later.
+    </div>
+    <div id="loadingModal"></div>
+    <div id="mainContainer">
+      
+      <div id="upperLeft">
+        <div>
+          <div id="mainForecast">Loading..</div>
+          <div id="location">Loading...</div>
+        </div>
+        <div>
+          <div id="date">
+            Loading...
+          </div>
+          <div id="time">
+            Loading...
+          </div>
+        </div>
+
+        <div>
+          <div id="mainTemperature">Loading...</div>
+          <div id="switchTemperatureContainer">
+            <button id="switchTemperatureButton">Display °F</button>
+          </div>
+        </div>
+
+        <div id="mainIcon"></div>
+        <form id="searchContainer">
+          <input type="text" id="searchBar" placeholder="Search Location..." minlength="2">
+          <div id="searchIconContainer"></div>
+        </form>
+        <div id="locationNotFound">Location not found.
+          Search must be in the form of "City"</div>
+      </div>
+
+      <div id="upperRight">
+        <div id="alignRight">
+          <div class="upperRightContainer">
+            <div id="feelsLikeIcon" class="iconContainer"></div>
+            <div>
+              <p class="upperLeftText">Feels Like</p>
+              <div id="feelsLike" class="upperLeftText">Loading...</div>
+            </div>
+          </div>
+  
+          <div class="upperRightContainer">
+            <div id="humidityIcon" class="iconContainer"></div>
+            <div>
+              <p class="upperLeftText">Humidity</p>
+              <div id="humidity" class="upperLeftText">Loading...</div>
+            </div>
+          </div>
+  
+          <div class="upperRightContainer">
+            <div id="precipitationIcon" class="iconContainer"></div>
+            <div>
+              <p class="upperLeftText">Precipitation</p>
+              <div id="precipitation" class="upperLeftText">Loading...</div>
+            </div>
+          </div>
+  
+          <div class="upperRightContainer">
+            <div id="windSpeedIcon" class="iconContainer"></div>
+            <div>
+              <p class="upperLeftText">Wind Speed</p>
+              <div id="windSpeed" class="upperLeftText">Loading...</div>
+            </div>
+          </div>
+        </div>
+        </div>
+      <div id="footer">
+        <div id="dailyHourlyContainer">
+          <button id="dailyButton" class="border">Daily</button>
+          <button id="hourlyButton">Hourly</button>
+          <div id="hoursSelectionContainer">
+            <button id="leftArrow" class="arrow"></button>
+            <div id="dot0" class="dot active" data-hour="0"></div>
+            <div id="dot1" class="dot" data-hour="1"></div>
+            <div id="dot2" class="dot" data-hour="2"></div>
+            <button id="rightArrow" class="arrow"></button>
+          </div>
+        </div>
+        <div class="dailyForecastGrid show">
+          <div class="dayCard">
+            <div id="dayName">Loading</div>
+            <div id="dayMaxTemp">Loading</div>
+            <div id="dayMinTemp">Loading</div>
+            <div id="dayIcon"></div>
+          </div>
+
+          <div class="dayCard">
+            <div id="dayName">Loading</div>
+            <div id="dayMaxTemp">Loading</div>
+            <div id="dayMinTemp">Loading</div>
+            <div id="dayIcon"></div>
+          </div>
+
+          <div class="dayCard">
+            <div id="dayName">Loading</div>
+            <div id="dayMaxTemp">Loading</div>
+            <div id="dayMinTemp">Loading</div>
+            <div id="dayIcon"></div>
+          </div>
+
+          <div class="dayCard">
+            <div id="dayName">Loading</div>
+            <div id="dayMaxTemp">Loading</div>
+            <div id="dayMinTemp">Loading</div>
+            <div id="dayIcon"></div>
+          </div>
+
+          <div class="dayCard">
+            <div id="dayName">Loading</div>
+            <div id="dayMaxTemp">Loading</div>
+            <div id="dayMinTemp">Loading</div>
+            <div id="dayIcon"></div>
+          </div>
+
+          <div class="dayCard">
+            <div id="dayName">Loading</div>
+            <div id="dayMaxTemp">Loading</div>
+            <div id="dayMinTemp">Loading</div>
+            <div id="dayIcon"></div>
+          </div>
+
+          <div class="dayCard">
+            <div id="dayName">Loading</div>
+            <div id="dayMaxTemp">Loading</div>
+            <div id="dayMinTemp">Loading</div>
+            <div id="dayIcon"></div>
+          </div>
+        </div>
+
+        <div class="hourlyForecastGrid">
+
+          <div id="eightHourChunk0" class="chunk show">
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+          </div>
+
+          <div id="eightHourChunk1" class="chunk">
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+          </div>
+
+          <div id="eightHourChunk2" class="chunk">
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+  
+            <div class="hourCard">
+              <div id="hourName">Loading</div>
+              <div id="hourTemp">Loading</div>
+              <div id="hourIcon"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </body>
+</html>
