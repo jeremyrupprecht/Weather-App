@@ -48,6 +48,7 @@ npm run start
 ```
 Then navigate to localhost to view the app.
 
+[Live App](https://jeremyrupprecht.github.io/Weather-App/)
 ![Alt text](/src/images/READMEScreenshot.png?raw=true )
 
 
