@@ -48,6 +48,8 @@ npm run start
 ```
 Then navigate to localhost to view the app.
 
+![Alt text](/src/images/READMEScreenshot.png?raw=true )
+
 
 
 ## Contributors
