@@ -1,5 +1,8 @@
 # Weather-App
 
+![Alt text](/src/images/READMEScreenshot.png?raw=true )
+[Live App](https://jeremyrupprecht.github.io/Weather-App/)
+
 The Weather App is a user-friendly web application that provides real-time weather information for any city worldwide. It fetches weather data from the [Open Meteo Weather API](https://open-meteo.com/), offering a comprehensive display of both weekly and hourly forecasts. The app is designed to cater to users' preferences by allowing them to choose between Celsius and Fahrenheit temperature units.
 
 ## Features
@@ -47,11 +50,6 @@ npm run build
 npm run start
 ```
 Then navigate to localhost to view the app.
-
-[Live App](https://jeremyrupprecht.github.io/Weather-App/)
-![Alt text](/src/images/READMEScreenshot.png?raw=true )
-
-
 
 ## Contributors
 
